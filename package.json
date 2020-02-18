@@ -1,5 +1,8 @@
 {
-  "name": "@plugfigure/vault",
+  "name": "@HelmkinDigital/vault",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "version": "0.0.2",
   "description": "Pluggable configuration loader",
   "main": "lib/index.js",
@@ -8,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/plugfigure/plugfigure-vault.git"
+    "url": "git+https://github.com/HelmkinDigital/plugfigure-vault.git"
   },
   "keywords": [
     "configuration",
@@ -17,10 +20,6 @@
   ],
   "author": "Ben Turner",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/plugfigure/plugfigure-vault/issues"
-  },
-  "homepage": "https://github.com/plugfigure/plugfigure-vault#readme",
   "peerDependencies": {
     "@plugfigure/core": "^0.0.1"
   },
