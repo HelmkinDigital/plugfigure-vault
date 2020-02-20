@@ -1,26 +1,24 @@
-import VaultClient from 'node-vault-client';
+import https from 'https';
 
 export default function(options) {
-  client = new VaultClient(options);
-
   return async (params, watcher) => {
-    const [path, refreshIntervalString] = params.split(' ');
-    const refreshInterval = parseInt(refreshIntervalString, 10);
+    const [path, key] = params.split(' ');
+    const resBody = await new Promise((resolve, reject) => {
+      https.request({
+        ...options,
+        params,
+      }, (res) => {
+        if (res.statusCode !== 200) return reject(res.statusMessage);
 
-    const res = await client.read(params);
-    let value = res.__data;
-    if (refreshInterval) {
-      setInterval(async () => {
-        const refreshRes = await client.read(params);
-
-        if (refreshRes.__data !== value) {
-          value = refreshRes.__data;
-          watcher(value);
+        let data = '';
+        for await (const chunk of res) {
+          data += chunk;
         }
-      }, refreshInterval);
-    }
+        resolve(data);
+      });
+    });
 
-    return value;
+    console.log(resBody);
   };
 }
 
