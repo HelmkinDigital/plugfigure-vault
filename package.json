@@ -21,7 +21,7 @@
   "author": "Ben Turner",
   "license": "MIT",
   "peerDependencies": {
-    "@plugfigure/core": "^0.0.1"
+    "@HelmkinDigital/pugfigure": "^0.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",

@@ -1,9 +1,8 @@
 import https from 'https';
 import http from 'http';
 
-async function getVaultValue(address, token, params, watcher) {
-  const [path, key] = params.split(' ');
-  const vaultRes = await new Promise((resolve, reject) => {
+async function getRawVaultData(address, path, token) {
+  return new Promise((resolve, reject) => {
     const url = new URL(`/v1/${path}`, address);
     const options = {
       hostname: url.hostname,
@@ -27,17 +26,26 @@ async function getVaultValue(address, token, params, watcher) {
     (url.protocol === 'https:' ? https : http).get(options, listener)
       .on('error', err => reject(err));
   });
+}
 
-  const {
-    lease_duration,
-    data,
-  } = vaultRes;
+async function getVaultValue(address, token, params, cb) {
+  const [path, key] = params.split(' ');
 
-  setTimeout(async () => {
-    watcher(await getVaultValue(address, token, params, watcher));
-  }, (2 * lease_duration / 3) * 1000); // 2/3rds lease duration
+  let timeout;
 
-  return key ? data[key] : data;
+  const update = async () => {
+    const { lease_duration, data } = await getRawVaultData(address, path, token);
+    timeout = setTimeout(update, (2 / 3 * lease_duration) * 1000); // 2/3rds lease duration
+    cb(data);
+  };
+
+  const { lease_duration, data } = await getRawVaultData(address, path, token);
+  timeout = setTimeout(update, (2 / 3 * lease_duration) * 1000); // 2/3rds lease duration
+
+  return {
+    value: key ? data[key] : data,
+    cancel: () => clearTimeout(timeout),
+  };
 }
 
 export default function(address, token) {
