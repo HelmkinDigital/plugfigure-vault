@@ -1,6 +1,7 @@
 import https from 'https';
 import http from 'http';
 
+
 async function getRawVaultData(address, path, token) {
   return new Promise((resolve, reject) => {
     const url = new URL(`/v1/${path}`, address);
@@ -29,7 +30,7 @@ async function getRawVaultData(address, path, token) {
 }
 
 async function getVaultValue(address, token, params, cb) {
-  const [path, key] = params.split(' ');
+  const [path, key] = typeof params === 'string' ? params.split(' ') : params;
 
   let timeout;
 
